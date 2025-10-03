@@ -4,39 +4,75 @@
  *
  * @format
  */
+//@ts-ignore-error
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { CartProvider } from './src/functions/CartContext';
+import LoginScreen from './src/screen/login';
+import ProductList from './src/screen/productList';
+import ProductDetail from './src/screen/productDetail';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Cart from './src/screen/Cart';
+const Stack = createNativeStackNavigator();
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <CartProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Login">
+            <Stack.Screen
+              name="Login"
+              options={{ headerShown: false }}
+              component={LoginScreen}
+            />
+            <Stack.Screen
+              name="Cart"
+              options={{ headerShown: false }}
+              component={Cart}
+            />
+            <Stack.Screen
+              name="ProductList"
+              // options={{ headerShown: false }}
+              component={ProductList}
+              options={({ navigation }) => ({
+                title: 'Products',
+                headerRight: () => (
+                  <Icon
+                    name="shopping-cart"
+                    size={24}
+                    style={{ marginRight: 15 }}
+                    onPress={() => navigation.navigate('Cart')}
+                  />
+                ),
+              })}
+            />
+            <Stack.Screen
+              name="Detail"
+              options={{ headerShown: false }}
+              component={ProductDetail}
+              options={({ navigation }) => ({
+                title: 'Details',
+                headerRight: () => (
+                  <Icon
+                    name="shopping-cart"
+                    size={24}
+                    style={{ marginRight: 15 }}
+                    onPress={() => navigation.navigate('Cart')}
+                  />
+                ),
+              })}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </CartProvider>
     </SafeAreaProvider>
   );
 }
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
+StyleSheet.create({
   container: {
     flex: 1,
   },
